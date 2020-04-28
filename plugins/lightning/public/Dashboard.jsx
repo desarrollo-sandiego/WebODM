@@ -130,7 +130,7 @@ export default class Dashboard extends React.Component {
                     <button className="btn btn-primary btn-sm" onClick={this.handleRefresh}><i className="fa fa-sync"></i> Refresh Balance</button>
                 </div>
                 
-                <h4>Hello, <a href="javascript:void(0)" onClick={this.handleOpenDashboard}>{ user.email }</a></h4>
+                <h4>Hola, <a href="javascript:void(0)" onClick={this.handleOpenDashboard}>{ user.email }</a>!</h4>
 
                 <div className="lightning-nodes">
                     <h5>Synced Nodes</h5>

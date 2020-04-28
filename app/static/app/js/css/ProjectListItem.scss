@@ -1,8 +1,36 @@
 .project-list-item{
-    min-height: 60px;
+    background-color: #eeeded;
+    border: none;
+    min-height: 80px;
+    padding: 20px 30px;
+
+    &:first-child {
+        border-top-right-radius: 15px;
+        border-top-left-radius: 15px;
+    }
+    &:last-child {
+        border-bottom-right-radius: 15px;
+        border-bottom-left-radius: 15px;
+    }
+
+    .agregar-muestra {
+        border-radius: 15px !important;
+        padding: 10px 15px;
+    }
 
     .project-name{
         font-weight: bold;
+        font-size: large;
+    }
+
+    .project-wrapper-parent:first-child {
+        border-top: none;
+        padding-top: 0;
+    }
+
+    .project-wrapper {
+        border-top: solid 1px #4c4c4c;
+        padding-top: 40px;
     }
 
     .drag-drop-icon{

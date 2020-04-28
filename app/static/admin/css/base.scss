@@ -1,10 +1,17 @@
 /*
     DJANGO Admin styles
 */
+@import url(/app/static/app/fonts/Roboto.css);
+body {
+    font-family: "Roboto";
+}
 
 .admin-area{
+    body {
+        font-family: "Roboto";
+    }
     background-color: #fff;
-    
+
     .CodeMirror-scroll, .CodeMirror{
         height: 150px !important;
     }
@@ -12,7 +19,7 @@
     #changelist-filter{
         display: none;
     }
-    
+
     a:link, a:visited {
         color: #447e9b;
         text-decoration: none;

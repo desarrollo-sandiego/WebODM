@@ -1,4 +1,11 @@
 .task-list-item{
+    border: solid 1px #4c4c4c;
+    border-radius: 20px;
+
+    &.no-padding{
+        padding: 0 !important;
+    }
+
     .row{
         margin: 0;
         padding: 4px;

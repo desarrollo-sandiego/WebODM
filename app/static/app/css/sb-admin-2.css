@@ -1,4 +1,4 @@
-/*!
+@import url(/static/app/fonts/Roboto.css);/*!
  * Start Bootstrap - SB Admin 2 (http://startbootstrap.com/)
  * Copyright 2013-2016 Start Bootstrap
  * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap/blob/gh-pages/LICENSE)
@@ -20,7 +20,7 @@ body {
 @media(min-width:768px) {
     #page-wrapper {
         position: inherit;
-        margin: 0 0 0 250px;
+        margin: 0px;
         border-left: 1px solid #e7e7e7;
     }
 }

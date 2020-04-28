@@ -5,7 +5,7 @@ ul#side-menu.nav a,
 .alert,
 .form-control,
 .dropdown-menu > li > a,
-.theme-color-primary,
+.theme-color-primary
 {
     color: theme("primary");
 }
@@ -83,7 +83,7 @@ a, a:hover, a:focus{
 }
 
 /* Button primary */
-#navbar-top .navbar-top-links,{
+#navbar-top .navbar-top-links{
 	a:hover,a:focus,.open > a{
 		background-color: theme("button_primary");
 		color: theme("secondary");
@@ -96,7 +96,6 @@ a, a:hover, a:focus{
 }
 
 #navbar-top ul#side-menu a:hover, #navbar-top ul#side-menu a.active:hover{
-	background-color: theme("button_primary");
 	color: theme("secondary");
 }
 
@@ -196,7 +195,7 @@ footer,
 .table-striped>tbody>tr:nth-of-type(odd),
 select.form-control option[disabled],
 .theme-background-highlight{
-	background-color: theme("highlight");
+	// background-color: theme("highlight");
 }
 .dropdown-menu > li > a{
 	&:hover, &:focus{

@@ -51,17 +51,17 @@ class Dashboard extends React.Component {
 
     return (
       <Router basename="/dashboard">
-        <div>
-          <div className="text-right add-button">
-            <button type="button" 
-                    className="btn btn-primary btn-sm"
+        <div className="container">
+          <div className="text-center add-button">
+            <button type="button"
+                    className="btn btn-primary btn-sm agregar-proyecto"
                     onClick={this.handleAddProject}>
               <i className="glyphicon glyphicon-plus"></i>
-              Add Project
+              Agregar proyecto
             </button>
           </div>
 
-          <EditProjectDialog 
+          <EditProjectDialog
             saveAction={this.addNewProject}
             ref={(domNode) => { this.projectDialog = domNode; }}
             />

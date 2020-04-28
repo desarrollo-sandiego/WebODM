@@ -75,7 +75,7 @@ def boot():
             default_logo = os.path.join('app', 'static', 'app', 'img', 'logo512.png')
 
             s = Setting.objects.create(
-                    app_name='WebODM',
+                    app_name='Agri4',
                     theme=default_theme)
             s.app_logo.save(os.path.basename(default_logo), File(open(default_logo, 'rb')))
 

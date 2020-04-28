@@ -180,7 +180,7 @@ class ProjectListItem extends React.Component {
                     file.retries++;
                     this.dz.processQueue();
                 }else{
-                    throw new Error(`Cannot upload ${file.name}, exceeded max retries (${MAX_RETRIES})`);
+                    throw new Error(`No se pudo cargar ${file.name}, Se excedió el numero maximo de entradas (${MAX_RETRIES})`);
                 }
             };
 
@@ -229,17 +229,17 @@ class ProjectListItem extends React.Component {
                     if (task && task.id){
                         this.newTaskAdded();
                     }else{
-                        this.setUploadState({error: `Cannot create new task. Invalid response from server: ${JSON.stringify(task)}`});
+                        this.setUploadState({error: `No se pudo crear la muestra. Invalid response from server: ${JSON.stringify(task)}`});
                     }
                   }).fail(() => {
-                    this.setUploadState({error: "Cannot create new task. Please try again later."});
+                    this.setUploadState({error: "No se pudo crear la muestra. Por favor, vuelva a intentar en unos minutos."});
                   });
             }else if (this.dz.getQueuedFiles() === 0){
                 // Done but didn't upload all?
                 this.setUploadState({
                     totalCount: this.state.upload.totalCount - remainingFilesCount,
                     uploading: false,
-                    error: `${remainingFilesCount} files cannot be uploaded. As a reminder, only images (.jpg, .tif, .png) and GCP files (.txt) can be uploaded. Try again.`
+                    error: `${remainingFilesCount} archivos no pudieron ser cargados. A modo de recordatorio, solo imágenes (.jpg, .tif, .png) y archivos GCP (.txt) pueden ser cargados. Vuelva a intentar.`
                 });
             }
         })
@@ -341,11 +341,11 @@ class ProjectListItem extends React.Component {
             this.dz.options.url = `/api/projects/${this.state.data.id}/tasks/${task.id}/upload/`;
             this.dz.processQueue();
         }else{
-            this.setState({error: `Cannot create new task. Invalid response from server: ${JSON.stringify(task)}`});
+            this.setState({error: `No se pudo crear la muestra. Invalid response from server: ${JSON.stringify(task)}`});
             this.handleTaskCanceled();
         }
       }).fail(() => {
-        this.setState({error: "Cannot create new task. Please try again later."});
+        this.setState({error: "No se pudo crear la muestra. Por favor, vuelva a intentar en unos minutos."});
         this.handleTaskCanceled();
       });
   }
@@ -405,9 +405,9 @@ class ProjectListItem extends React.Component {
 
         <EditProjectDialog 
           ref={(domNode) => { this.editProjectDialog = domNode; }}
-          title="Edit Project"
-          saveLabel="Save Changes"
-          savingLabel="Saving changes..."
+          title="Editar Proyecto"
+          saveLabel="Guardar"
+          savingLabel="Guardando..."
           saveIcon="far fa-edit"
           projectName={data.name}
           projectDescr={data.description}
@@ -415,83 +415,67 @@ class ProjectListItem extends React.Component {
           deleteAction={this.hasPermission("delete") ? this.handleDelete : undefined}
         />
 
-        <div className="row no-margin">
-          <ErrorMessage bind={[this, 'error']} />
-          <div className="btn-group pull-right">
-            {this.hasPermission("add") ? 
-              <div className={"asset-download-buttons btn-group " + (this.state.upload.uploading ? "hide" : "")}>
-                <button type="button" 
-                      className="btn btn-primary btn-sm"
-                      onClick={this.handleUpload}
-                      ref={this.setRef("uploadButton")}>
-                  <i className="glyphicon glyphicon-upload"></i>
-                  Select Images and GCP
-                </button>
-                <button type="button" 
-                      className="btn btn-default btn-sm"
-                      onClick={this.handleImportTask}>
-                  <i className="glyphicon glyphicon-import"></i> Import
-                </button>
-                {this.state.buttons.map((button, i) => <React.Fragment key={i}>{button}</React.Fragment>)}
-              </div>
-            : ""}
-
-            <button disabled={this.state.upload.error !== ""} 
-                    type="button"
-                    className={"btn btn-danger btn-sm " + (!this.state.upload.uploading ? "hide" : "")} 
-                    onClick={this.cancelUpload}>
-              <i className="glyphicon glyphicon-remove-circle"></i>
-              Cancel Upload
-            </button> 
-
-            <button type="button" className="btn btn-default btn-sm" onClick={this.viewMap}>
-              <i className="fa fa-globe"></i> View Map
-            </button>
-          </div>
-
-          <span className="project-name">
-            {data.name}
-          </span>
-          <div className="project-description">
-            {data.description}
-          </div>
-          <div className="row project-links">
-            {numTasks > 0 ? 
-              <span>
-                <i className='fa fa-tasks'>
-                </i> <a href="javascript:void(0);" onClick={this.toggleTaskList}>
-                  {numTasks} Tasks <i className={'fa fa-caret-' + (this.state.showTaskList ? 'down' : 'right')}></i>
-                </a>
-              </span>
+        <div className="row no-margin project-wrapper-parent">
+          <div className="project-wrapper">
+            <ErrorMessage bind={[this, 'error']} />
+            <div className="btn-group pull-right">
+              {this.hasPermission("add") ? 
+                <div className={"asset-download-buttons btn-group " + (this.state.upload.uploading ? "hide" : "")}>
+                  <button type="button" 
+                        className="btn btn-default btn-sm agregar-muestra"
+                        onClick={this.handleUpload}
+                        ref={this.setRef("uploadButton")}>
+                    <i className="glyphicon glyphicon-plus"></i>
+                    Agregar Muestra
+                  </button>
+                  {this.state.buttons.map((button, i) => <React.Fragment key={i}>{button}</React.Fragment>)}
+                </div>
               : ""}
 
-            <i className='far fa-edit'>
-            </i> <a href="javascript:void(0);" onClick={this.handleEditProject}> Edit
-            </a>
+              <button disabled={this.state.upload.error !== ""} 
+                      type="button"
+                      className={"btn btn-primary btn-sm " + (!this.state.upload.uploading ? "hide" : "")} 
+                      onClick={this.cancelUpload}>
+                <i className="glyphicon glyphicon-remove-circle"></i>
+                Cancelar
+              </button>
+
+            </div>
+
+            <span className="project-name">
+              {data.name}
+            </span>
+            <div className="project-description">
+              {data.description}
+            </div>
+            <div className="row project-links">
+              <i className='far fa-edit'>
+              </i> <a href="javascript:void(0);" onClick={this.handleEditProject}> Editar
+              </a>
+            </div>
           </div>
         </div>
         <i className="drag-drop-icon fa fa-inbox"></i>
         <div className="row">
           {this.state.upload.uploading ? <UploadProgressBar {...this.state.upload}/> : ""}
-          
-          {this.state.upload.error !== "" ? 
+
+          {this.state.upload.error !== "" ?
             <div className="alert alert-warning alert-dismissible">
                 <button type="button" className="close" aria-label="Close" onClick={this.closeUploadError}><span aria-hidden="true">&times;</span></button>
                 {this.state.upload.error}
             </div>
             : ""}
 
-          {this.state.upload.editing ? 
+          {this.state.upload.editing ?
             <NewTaskPanel
               onSave={this.handleTaskSaved}
               onCancel={this.handleTaskCanceled}
               filesCount={this.state.upload.totalCount}
-              showResize={true}
               getFiles={() => this.state.upload.files }
             />
           : ""}
 
-          {this.state.importing ? 
+          {this.state.importing ?
             <ImportTaskPanel
               onImported={this.newTaskAdded}
               onCancel={this.handleCancelImportTask}
@@ -499,9 +483,9 @@ class ProjectListItem extends React.Component {
             />
           : ""}
 
-          {this.state.showTaskList ? 
-            <TaskList 
-                ref={this.setRef("taskList")} 
+          {numTasks > 0 ?
+            <TaskList
+                ref={this.setRef("taskList")}
                 source={`/api/projects/${data.id}/tasks/?ordering=-created_at`}
                 onDelete={this.taskDeleted}
                 history={this.props.history}

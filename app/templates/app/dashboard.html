@@ -11,37 +11,23 @@
         </div>
 	<![endif]-->
 
-	{% if no_processingnodes %}
-		<h3>{% trans 'Welcome! ☺' %}</h3>
-		{% trans 'Add a Processing Node' as add_processing_node %}
-		{% with nodeodm_link='<a href="https://github.com/OpenDroneMap/NodeODM" target="_blank">NodeODM</a>' api_link='<a href="https://github.com/OpenDroneMap/NodeODM/blob/master/docs/index.adoc" target="_blank">API</a>' %}
-			<p>
-			{% blocktrans %} 
-				To get started, "{{ add_processing_node }}". A processing node is a computer running an instance of {{ nodeodm_link }} or some other software that implements this {{ api_link }}.
-			{% endblocktrans %}
-			</p>
-		{% endwith %}
-		<button class="btn btn-primary" onclick="location.href='{% url "admin:nodeodm_processingnode_add" %}';"><i class="fa fa-plus-circle"></i> {{ add_processing_node }}</button>
-		
-	{% else %}
-		
-		{% if no_tasks %}
-			<h3>{% trans 'Welcome! ☺' %}</h3>
-			{% trans 'Select Images and GCP' as upload_images %}
-			<p>
-				{% blocktrans %} To create a map, press the "{{ upload_images }}" button, or drag and drop some images into a project. {% endblocktrans %}
-			</p>
+	{% if no_tasks %}
+	<div class="row">
+		<div class="welcome-container col-md-4 col-md-offset-4">
+			<h3 class="text-center">{% trans '¡Bienvenido/a!' %}</h3>
+			<h5 class="text-center">{% trans 'Comience por crear su primer muestra haciendo click en el botón a la derecha de su proyecto' %}</h5>
 			<p>
 				<ul>
-					<li>{% trans 'You need at least 5 images' %}</li>
-					<li>{% trans 'Images must overlap by 65% or more' %}</li>
-					<li>{% trans 'For great 3D, images must overlap by 83%' %}</li>
-					<li>{% trans 'A <a href="https://github.com/OpenDroneMap/OpenDroneMap/wiki/Running-OpenDroneMap#running-odm-with-ground-control" target="_blank">GCP file</a> is optional, but can increase georeferencing accuracy' %}</li>
+					<li>{% trans 'Se necesitan como mínimo 5 imágenes' %}</li>
+					<li>{% trans 'Las imágenes deben superponerse al menos en un 65%' %}</li>
+					<li>{% trans 'Para un modelo 3D de mejor nivel, las imágenes deben superponerse en un 83%' %}</li>
+					<li>{% trans 'Un archivo GCP es opcional, pero puede aumentar la precisión de la geo referenciación' %}</li>
 				</ul>
 			</p>
-		{% endif %}
-
-		<div id="dashboard-app" data-dashboard></div>
-
+		</div>
+	</div>
 	{% endif %}
+
+	<div id="dashboard-app"  class="row" data-dashboard></div>
+
 {% endblock %}

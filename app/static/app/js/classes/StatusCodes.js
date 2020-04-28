@@ -6,23 +6,23 @@ const QUEUED = 10,
 
 let statusCodes = {
     [QUEUED]: {
-        descr: "Queued",
+        descr: "En cola",
         icon: "far fa-hourglass fa-fw"
     },
     [RUNNING]: {
-        descr: "Running",
+        descr: "Procesando",
         icon: "fa fa-cog fa-spin fa-fw"
     },
     [FAILED]: {
-        descr: "Failed",
+        descr: "Fallido",
         icon: "fa fa-times fa-fw"
     },
     [COMPLETED]: {
-        descr: "Completed",
+        descr: "Completado",
         icon: "fa fa-check fa-fw"
     },
     [CANCELED]: {
-        descr: "Canceled",
+        descr: "Cancelado",
         icon: "fa fa-ban fa-fw"
     }
 };

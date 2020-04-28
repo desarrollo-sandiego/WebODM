@@ -19,28 +19,18 @@ class EditTaskPanel extends React.Component {
         super(props);
 
         this.state = {
-          editTaskFormLoaded: false,
           saving: false,
           error: ''
         };
 
         this.handleSave = this.handleSave.bind(this);
         this.handleCancel = this.handleCancel.bind(this);
-        this.handleFormTaskLoaded = this.handleFormTaskLoaded.bind(this);
-    }
-
-    handleFormTaskLoaded(){
-      this.setState({editTaskFormLoaded: true});
     }
 
     handleSave(){
       this.setState({saving: true});
 
       let taskInfo = this.taskForm.getTaskInfo();
-
-      taskInfo.processing_node = taskInfo.selectedNode.id;
-      taskInfo.auto_processing_node = taskInfo.selectedNode.key == "auto";
-      delete(taskInfo.selectedNode);
 
       $.ajax({
           url: `/api/projects/${this.props.task.project}/tasks/${this.props.task.id}/`,
@@ -52,8 +42,8 @@ class EditTaskPanel extends React.Component {
           this.setState({saving: false});
           this.props.onSave(json);
         }).fail(() => {
-          this.setState({saving: false, error: "Could not update task information. Plese try again."});
-        });     
+          this.setState({saving: false, error: "No sé pudo editar la información de su muestra. Por favor, intente nuevamente."});
+        });
     }
 
     handleCancel(){
@@ -65,20 +55,19 @@ class EditTaskPanel extends React.Component {
             <div className="edit-task-panel">
               <ErrorMessage bind={[this, "error"]} />
               <div className="form-horizontal">
-                <EditTaskForm 
+                <EditTaskForm
                   ref={(domNode) => { if (domNode) this.taskForm = domNode; }}
-                  onFormLoaded={this.handleFormTaskLoaded}
                   task={this.props.task}
                 />
                 <div className="actions">
-                    <button type="button" className="btn btn-sm btn-default" onClick={this.handleCancel} disabled={this.state.saving}>Cancel</button>
-                    <button type="button" className="btn btn-sm btn-primary save" onClick={this.handleSave} disabled={this.state.saving || !this.state.editTaskFormLoaded}>
-                        {this.state.saving ? 
+                    <button type="button" className="btn btn-sm btn-primary" onClick={this.handleCancel} disabled={this.state.saving}>Cancelar</button>
+                    <button type="button" className="btn btn-sm btn-default save" onClick={this.handleSave} disabled={this.state.saving}>
+                        {this.state.saving ?
                             <span>
-                                <i className="fa fa-circle-notch fa-spin"></i> Saving...
+                                <i className="fa fa-circle-notch fa-spin"></i> Guardando...
                             </span>
                         :   <span>
-                                <i className="fa fa-edit"></i> Save
+                                <i className="fa fa-edit"></i> Guardar
                             </span>}
                     </button>
                 </div>

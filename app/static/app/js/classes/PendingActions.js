@@ -6,19 +6,19 @@ const CANCEL = 1,
 
 let pendingActions = {
     [CANCEL]: {
-        descr: "Canceling..."
+        descr: "Cancelando..."
     },
     [REMOVE]: {
-        descr: "Deleting..."
+        descr: "Eliminando..."
     },
     [RESTART]: {
-        descr: "Restarting..."
+        descr: "Reiniciando..."
     },
     [RESIZE]: {
-      descr: "Resizing images..."
+      descr: "Preparando las imágenes para procesar..."
     },
     [IMPORT]: {
-      descr: "Importing..."
+      descr: "Importando..."
     }
 };
 

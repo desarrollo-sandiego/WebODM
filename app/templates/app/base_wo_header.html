@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load i18n static settings compress plugins %}
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="WebODM Contributors">
+    <link rel="icon" type="image/png" href="{% settings_image_url 'app_logo_favicon' %}" sizes="32x32">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'app/css/bootstrap.min.css' %}" />
+
+    <link href="{% static 'app/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'app/css/metisMenu.min.css' %}" rel="stylesheet">
+    <link href="{% static 'app/css/sb-admin-2.css' %}" rel="stylesheet">
+    {% block extra-headers %}{% endblock %}
+
+    <script src="{% static 'app/js/vendor/modernizr-2.8.3.min.js' %}"></script>
+    <script src="{% static 'app/js/vendor/es6-shim.min.js' %}"></script>
+    <script src="{% static 'app/js/vendor/jquery-1.11.2.min.js' %}"></script>
+    <script src="{% static 'app/js/vendor/system.js' %}"></script>
+
+    {% load render_bundle from webpack_loader %}
+    {% render_bundle 'main' %}
+
+    {% autoescape off %}
+    {% get_plugins_js_includes %}
+    {% get_plugins_css_includes %}
+    {% endautoescape %}
+
+    <title>{{title|default:"Login"}} - {{ SETTINGS.app_name }}</title>
+
+    {% compress css %}
+    <link rel="stylesheet" type="text/x-scss" href="{% static 'app/css/theme.scss' %}" />
+    {% endcompress %}
+
+    <style type="text/css">
+        {{ SETTINGS.theme.css|safe }}
+    </style>
+</head>
+<body data-admin-utc-offset="{% now "Z" %}" class="registration-background">
+{% block body %}
+    <!--[if lt IE 8]>
+        <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+    <!--
+            {% if request.user.is_authenticated %}
+                {% if user.is_superuser %}
+                <li>
+                    <a class="page-scroll" href="/admin/">Admin Panel</a>
+                </li>
+                {% endif %}
+                <li>
+                    <a class="page-scroll" href="/logout/">Logout</a>
+                </li>
+            {% else %}
+                 <li>
+                    <a class="page-scroll" href="/login/">Login</a>
+                </li>
+            {% endif %}
+            </ul>
+-->
+    <div id="wrapper">
+        {{ SETTINGS.theme.html_before_header|safe }}
+
+        {% block page-wrapper %}{{ SETTINGS.theme.html_after_header|safe }}{% endblock %}
+    </div>
+
+    {% autoescape off %}
+    {% get_footer %}
+    {% endautoescape %}
+{% endblock %}
+</body>
+<script src="{% static 'app/js/vendor/metisMenu.min.js' %}"></script>
+<script src="{% static 'app/js/vendor/bootstrap.min.js' %}"></script>
+{{ SETTINGS.theme.html_after_body|safe }}
+</html>

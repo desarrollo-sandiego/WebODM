@@ -108,6 +108,7 @@ class FirstUserForm(forms.ModelForm):
         fields = ('username', 'password', )
         widgets = {
             'password': forms.PasswordInput(),
+            'username': forms.TextInput(attrs={'placeholder': 'Nombre de usuario'})
         }
 
 
