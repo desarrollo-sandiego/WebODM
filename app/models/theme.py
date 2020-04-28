@@ -15,15 +15,15 @@ class Theme(models.Model):
     name = models.CharField(max_length=255, blank=False, null=False, help_text="Name of theme")
 
     # Similar to how discourse.org does it
-    primary = ColorField(default='#2c3e50', help_text="Most text, icons, and borders.")
+    primary = ColorField(default='#000000', help_text="Most text, icons, and borders.")
     secondary = ColorField(default='#ffffff', help_text="The main background color, and text color of some buttons.")
-    tertiary = ColorField(default='#3498db', help_text="Navigation links.")
+    tertiary = ColorField(default='#1e00fe', help_text="Navigation links.")
 
-    button_primary = ColorField(default='#2c3e50', help_text="Primary button color.")
-    button_default = ColorField(default='#95a5a6', help_text="Default button color.")
-    button_danger = ColorField(default='#e74c3c', help_text="Delete button color.")
+    button_primary = ColorField(default='#4c4c4c', help_text="Primary button color.")
+    button_default = ColorField(default='#528f53', help_text="Default button color.")
+    button_danger = ColorField(default='#ff3939', help_text="Delete button color.")
 
-    header_background = ColorField(default='#3498db', help_text="Background color of the site's header.")
+    header_background = ColorField(default='#000000', help_text="Background color of the site's header.")
     header_primary = ColorField(default='#ffffff', help_text="Text and icons in the site's header.")
 
     border = ColorField(default='#e7e7e7', help_text="The color of most borders.")

@@ -1,6 +1,21 @@
 html, body, section.main, .content, #wrapper, #page-wrapper{
     height: auto;
 }
+body {
+    font-family: "Roboto";
+}
+
+.registration-background {
+    height: calc(100vh);
+}
+
+.welcome-container {
+    background-color: #000;
+    border-radius: 25px;
+    color: #fff;
+    padding: 25px 20px;
+}
+
 #page-wrapper{
     margin-top: 1px;
     padding-bottom: 8px;
@@ -235,7 +250,6 @@ button i.glyphicon{
 }
 
 .navbar-text {
-	position: absolute;
 	top: 0px;
 	left: 50px;
 }

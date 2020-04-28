@@ -60,7 +60,7 @@ class ProjectList extends Paginated {
             })
             .fail((jqXHR, textStatus, errorThrown) => {
                 this.setState({ 
-                    error: `Could not load projects list: ${textStatus}`,
+                    error: `No se pudo cargar la lista de proyectos: ${textStatus}`,
                     loading: false
                 });
             })
@@ -87,7 +87,7 @@ class ProjectList extends Paginated {
 
     render() {
         if (this.state.loading){
-            return (<div className="project-list">Loading projects... <i className="fa fa-sync fa-spin fa-fw"></i></div>);
+            return (<div className="project-list">Cargando sus proyectos... <i className="fa fa-sync fa-spin fa-fw"></i></div>);
         }else{
             return (<div className="project-list">
                 <ErrorMessage bind={[this, 'error']} />

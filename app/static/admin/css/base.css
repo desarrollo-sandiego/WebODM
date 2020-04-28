@@ -99,7 +99,7 @@
     padding-left: 10px;
     border-left: 5px solid #ddd; }
   .admin-area code, .admin-area pre {
-    font-family: "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
+    font-family: "Roboto Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
     color: #666;
     font-size: 12px; }
   .admin-area pre.literal-block {
@@ -612,4 +612,8 @@
   .admin-area .popup #header {
     padding: 10px 20px; }
 
+  /* BOOTSTRAP OVERRIDES */
+
+body { font-family: "Roboto"; }
+h1,h2,h3,h4,h5,h6 { font-family: "Roboto"; }
 /*# sourceMappingURL=base.css.map */

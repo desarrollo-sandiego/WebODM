@@ -46,7 +46,7 @@
     <![endif]-->
     <!--
             {% if request.user.is_authenticated %}
-                {% if user.is_superuser %}          
+                {% if user.is_superuser %}
                 <li>
                     <a class="page-scroll" href="/admin/">Admin Panel</a>
                 </li>
@@ -64,20 +64,14 @@
     <div id="wrapper">
         {{ SETTINGS.theme.html_before_header|safe }}
 
-        <nav id="navbar-top" class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                {% block navbar-top-links %}{% endblock %}
-                <a class="navbar-brand" href="/"><img src="{% settings_image_url 'app_logo_36' %}" alt="{{ SETTINGS.app_name }}" /></a>
-                <a class="navbar-link" href="/"><p class="navbar-text">{{ SETTINGS.app_name }}</p></a>
+        <nav id="navbar-top" class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0;">
+            <div class="container">
+                <div class="navbar-header">
+                    {% block navbar-top-links %}{% endblock %}
+                    <a class="navbar-brand" href="/"><img src="{% settings_image_url 'app_logo_36' %}" alt="{{ SETTINGS.app_name }}" /></a>
+                    <a class="navbar-link" href="/"><p class="navbar-text">{{ SETTINGS.app_name }}</p></a>
+                </div>
             </div>
-
-            {% block navbar-sidebar %}{% endblock %}
         </nav>
 
         {% block page-wrapper %}{{ SETTINGS.theme.html_after_header|safe }}{% endblock %}
@@ -89,45 +83,6 @@
 {% endblock %}
 </body>
 <script src="{% static 'app/js/vendor/metisMenu.min.js' %}"></script>
-<script>
-$(function(){
-    $('#side-menu').metisMenu();
-
-    $(window).bind("load resize", function() {
-        var topOffset = 50;
-        var width = (this.window.innerWidth > 0) ? this.window.innerWidth : this.screen.width;
-        if (width < 768) {
-            $('div.navbar-collapse').addClass('collapse');
-            topOffset = 100; // 2-row-menu
-        } else {
-            $('div.navbar-collapse').removeClass('collapse');
-        }
-
-        var height = ((this.window.innerHeight > 0) ? this.window.innerHeight : this.screen.height) - 1;
-        height = height - topOffset;
-        if (height < 1) height = 1;
-        if (height > topOffset) {
-            $("#page-wrapper").css("min-height", (height) + "px");
-        }
-    });
-
-    var url = window.location;
-    var element = $('ul.nav a').filter(function() {
-     return this.href == url;
-    }).addClass('active').parent();
-
-    while(true){
-        if (element.is('li')){
-            element = element.parent().addClass('in');
-        } else {
-            break;
-        }
-    }
-
-    if (element.parent().is('li')) element.parent().addClass('active');
-});
-
-</script>
 <script src="{% static 'app/js/vendor/bootstrap.min.js' %}"></script>
 {{ SETTINGS.theme.html_after_body|safe }}
 </html>

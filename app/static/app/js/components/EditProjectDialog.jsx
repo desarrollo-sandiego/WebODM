@@ -8,11 +8,11 @@ class EditProjectDialog extends React.Component {
     static defaultProps = {
         projectName: "",
         projectDescr: "",
-        title: "New Project",
-        saveLabel: "Create Project",
-        savingLabel: "Creating project...",
+        title: "Nuevo Proyecto",
+        saveLabel: "Crear proyecto",
+        savingLabel: "Creando proyecto...",
         saveIcon: "glyphicon glyphicon-plus",
-        deleteWarning: "All tasks, images and models associated with this project will be permanently deleted. Are you sure you want to continue?",
+        deleteWarning: "Todas las muestras, imágenes y modelos asociados a este proyecto serán eliminadas permanentemente. Está seguro que desea continuar?",
         show: false
     };
 
@@ -83,13 +83,13 @@ class EditProjectDialog extends React.Component {
                 onShow={this.onShow}
                 ref={(domNode) => { this.dialog = domNode; }}>
               <div className="form-group">
-                <label className="col-sm-2 control-label">Name</label>
+                <label className="col-sm-2 control-label">Nombre</label>
                 <div className="col-sm-10">
                   <input type="text" className="form-control" ref={(domNode) => { this.nameInput = domNode; }} value={this.state.name} onChange={this.handleChange('name')} />
                 </div>
               </div>
               <div className="form-group">
-                <label className="col-sm-2 control-label">Description (optional)</label>
+                <label className="col-sm-2 control-label">Descripción (opcional)</label>
                 <div className="col-sm-10">
                   <textarea className="form-control" rows="3" value={this.state.descr} onChange={this.handleChange('descr')} />
                 </div>

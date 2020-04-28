@@ -71,11 +71,11 @@ class TaskList extends React.Component {
   render() {
     let message = "";
     if (this.state.loading){
-      message = (<span>Loading... <i className="fa fa-sync fa-spin fa-fw"></i></span>);
+      message = (<span>Cargando... <i className="fa fa-sync fa-spin fa-fw"></i></span>);
     }else if (this.state.error){
-      message = (<span>Error: {this.state.error}. <a href="javascript:void(0);" onClick={this.retry}>Try again</a></span>);
+      message = (<span>Error: {this.state.error}. <a href="javascript:void(0);" onClick={this.retry}>Intentar nuevamente</a></span>);
     }else if (this.state.tasks.length === 0){
-      message = (<span>This project has no tasks. Create one by uploading some images!</span>);
+      message = (<span>Este proyecto no tiene muestras. Crea una muestra subiendo tus imágenes!</span>);
     }
 
     return (
