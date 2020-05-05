@@ -54,14 +54,8 @@ class TaskListItem extends React.Component {
     this.setView = this.setView.bind(this);
 
     // Retrieve CSS values for status bar colors
-    this.backgroundSuccessColor = Css.getValue(
-      "theme-background-success",
-      "backgroundColor"
-    );
-    this.backgroundFailedColor = Css.getValue(
-      "theme-background-failed",
-      "backgroundColor"
-    );
+    this.backgroundSuccessColor = "#528f53";
+    this.backgroundFailedColor = "#ff3939";
   }
 
   shouldRefresh() {
@@ -399,7 +393,9 @@ class TaskListItem extends React.Component {
         })
         .fail(() => {
           this.setState({
-            actionError: `No se pudo reiniciar la muestra desde ${value || "el comienzo"}.`,
+            actionError: `No se pudo reiniciar la muestra desde ${
+              value || "el comienzo"
+            }.`,
             actionButtonsDisabled: false,
           });
         });
@@ -463,25 +459,80 @@ class TaskListItem extends React.Component {
       });
     }
 
-    // Ability to change options
-    if (
-      [statusCodes.FAILED, statusCodes.COMPLETED, statusCodes.CANCELED].indexOf(
-        task.status
-      ) !== -1 ||
-      !task.processing_node
-    ) {
-      addActionButton(
-        "Editar",
-        "btn-primary pull-right edit-button",
-        "glyphicon glyphicon-pencil",
-        () => {
-          this.startEditing();
-        },
-        {
-          className: "inline",
-        }
+    // @param type {String} one of: ['neutral', 'done', 'error']
+    const getStatusLabel = (text, type = "neutral", progress = 100) => {
+      let color = "rgba(255, 255, 255, 0.0)";
+      progress = `% ${progress}`;
+      if (type === "done") {
+        color = this.backgroundSuccessColor;
+      } else if (type === "error") {
+        color = this.backgroundFailedColor;
+        progress = "SIN COMPLETAR";
+      }
+      return (
+        <div
+          className={"status-label text-center " + type}
+          style={{
+            backgroundColor: color,
+          }}
+          title={progress}
+        >
+          {progress}
+        </div>
       );
+    };
+
+    let statusLabel = "";
+    let statusIcon = statusCodes.icon(task.status);
+    let showEditLink = false;
+
+    if (task.last_error) {
+      statusLabel = getStatusLabel(task.last_error, "error");
+    } else if (!task.processing_node && !imported) {
+      statusLabel = getStatusLabel("Set a processing node");
+      statusIcon = "fa fa-hourglass-3";
+      showEditLink = true;
+    } else if (task.partial && !task.pending_action) {
+      statusIcon = "fa fa-hourglass-3";
+      statusLabel = getStatusLabel("Waiting for image upload...");
+    } else {
+      let progress = 100;
+      let type = "done";
+
+      if (task.pending_action === pendingActions.RESIZE) {
+        progress = task.resize_progress * 100;
+      } else if (task.status === null) {
+        progress = task.upload_progress * 100;
+      } else if (task.status === statusCodes.RUNNING) {
+        progress = task.running_progress * 100;
+      } else if (task.status === statusCodes.FAILED) {
+        type = "error";
+      } else if (task.status !== statusCodes.COMPLETED) {
+        type = "neutral";
+      }
+
+      statusLabel = getStatusLabel(status, type, progress);
     }
+
+    // Ability to change options
+    // if (
+    //   [statusCodes.FAILED, statusCodes.COMPLETED, statusCodes.CANCELED].indexOf(
+    //     task.status
+    //   ) !== -1 ||
+    //   !task.processing_node
+    // ) {
+    //   addActionButton(
+    //     "Editar",
+    //     "btn-primary pull-right edit-button",
+    //     "glyphicon glyphicon-pencil",
+    //     () => {
+    //       this.startEditing();
+    //     },
+    //     {
+    //       className: "inline",
+    //     }
+    //   );
+    // }
 
     if (
       [statusCodes.QUEUED, statusCodes.RUNNING, null].indexOf(task.status) !==
@@ -492,40 +543,42 @@ class TaskListItem extends React.Component {
         "Cancelar",
         "btn-primary",
         "glyphicon glyphicon-remove-circle",
-        this.genActionApiCall("cancel", { defaultError: "No se puede cancelar la muestra." })
+        this.genActionApiCall("cancel", {
+          defaultError: "No se puede cancelar la muestra.",
+        })
       );
     }
 
-    if (
-      [statusCodes.FAILED, statusCodes.COMPLETED, statusCodes.CANCELED].indexOf(
-        task.status
-      ) !== -1 &&
-      task.processing_node &&
-      !imported
-    ) {
-      // By default restart reruns every pipeline
-      // step from the beginning
-      const rerunFrom =
-        task.can_rerun_from.length > 1 ? task.can_rerun_from[1] : null;
+    // if (
+    //   [statusCodes.FAILED, statusCodes.COMPLETED, statusCodes.CANCELED].indexOf(
+    //     task.status
+    //   ) !== -1 &&
+    //   task.processing_node &&
+    //   !imported
+    // ) {
+    //   // By default restart reruns every pipeline
+    //   // step from the beginning
+    //   const rerunFrom =
+    //     task.can_rerun_from.length > 1 ? task.can_rerun_from[1] : null;
 
-      addActionButton(
-        "Reiniciar",
-        "btn-primary",
-        "glyphicon glyphicon-repeat",
-        this.genRestartAction(rerunFrom),
-      );
-    }
+    //   addActionButton(
+    //     "Reiniciar",
+    //     "btn-primary",
+    //     "glyphicon glyphicon-repeat",
+    //     this.genRestartAction(rerunFrom)
+    //   );
+    // }
 
-    addActionButton(
-      "Eliminar",
-      "btn-danger",
-      "glyphicon glyphicon-trash",
-      this.genActionApiCall("remove", {
-        confirm:
-          "All information related to this task, including images, maps and models will be deleted. Continue?",
-        defaultError: "Cannot delete task.",
-      })
-    );
+    // addActionButton(
+    //   "Eliminar",
+    //   "btn-danger",
+    //   "glyphicon glyphicon-trash",
+    //   this.genActionApiCall("remove", {
+    //     confirm:
+    //       "All information related to this task, including images, maps and models will be deleted. Continue?",
+    //     defaultError: "Cannot delete task.",
+    //   })
+    // );
 
     const disabled =
       this.state.actionButtonsDisabled ||
@@ -538,7 +591,12 @@ class TaskListItem extends React.Component {
     actionButtons = (
       <div className="action-buttons">
         {task.status === statusCodes.COMPLETED ? (
-          <AssetDownloadButtons task={this.state.task} disabled={disabled} />
+          <AssetDownloadButtons
+            task={this.state.task}
+            disabled={disabled}
+            buttonClass="btn-icon"
+            showLabel={false}
+          />
         ) : (
           ""
         )}
@@ -596,93 +654,168 @@ class TaskListItem extends React.Component {
       <div className="expanded-panel">
         <div className="row">
           <div className="col-md-12 no-padding">
-            <div className="mb">
-              <div className="labels">
-                <strong>Fecha de creación: </strong>{" "}
-                {new Date(task.created_at).toLocaleString()}
-                <br />
-              </div>
-            </div>
-
-            {showOrthophotoMissingWarning ? (
-              <div className="task-warning">
-                <i className="fa fa-warning"></i>{" "}
-                <span>
-                  El ortofoto no pudo ser generado. Para crear uno, asegurate
-                  que la información GPS este dentro del EXIF tag de tus
-                  imagenes, o utiliza un archivo de Ground Control Points (GCP).
-                </span>
-              </div>
-            ) : (
-              ""
+            <span className="name">{name}</span>
+            {([
+              statusCodes.FAILED,
+              statusCodes.COMPLETED,
+              statusCodes.CANCELED,
+            ].indexOf(task.status) !== -1 ||
+              !task.processing_node) && (
+              <button
+                type="button"
+                className="btn btn-sm btn-icon btn-edit"
+                onClick={() => {
+                  this.startEditing();
+                }}
+                disabled={disabled}
+              >
+                <i className="far fa-edit"></i>
+              </button>
             )}
-
-            {showMemoryErrorWarning ? (
-              <div className="task-warning">
-                <i className="fa fa-support"></i>{" "}
-                <span>
-                  Parece que su nodo se ha quedado sin memoria, notifique a su
-                  Administrador.
-                </span>
-              </div>
-            ) : (
-              ""
-            )}
-
-            {showTaskWarning ? (
-              <div className="task-warning">
-                <i className="fa fa-support"></i>{" "}
-                <span
-                  dangerouslySetInnerHTML={{
-                    __html: this.state.friendlyTaskError,
+            {[
+              statusCodes.FAILED,
+              statusCodes.COMPLETED,
+              statusCodes.CANCELED,
+            ].indexOf(task.status) !== -1 &&
+              task.processing_node &&
+              !imported && (
+                <button
+                  type="button"
+                  className="btn btn-sm btn-icon btn-repeat"
+                  onClick={() => {
+                    const rerunFrom =
+                      task.can_rerun_from.length > 1
+                        ? task.can_rerun_from[1]
+                        : null;
+                    this.genRestartAction(rerunFrom);
                   }}
-                />
-              </div>
+                  disabled={disabled}
+                >
+                  <i className="far fa-redo"></i>
+                </button>
+              )}
+            <button
+              type="button"
+              className="btn btn-sm btn-icon btn-delete pull-right"
+              onClick={() => {
+                this.genActionApiCall("remove", {
+                  confirm:
+                    "All information related to this task, including images, maps and models will be deleted. Continue?",
+                  defaultError: "Cannot delete task.",
+                });
+              }}
+              disabled={disabled}
+            >
+              <i className="far fa-trash-alt"></i>
+            </button>
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-md-6 no-padding">
+            <i className="far fa-clock"></i>{" "}
+            {this.hoursMinutesSecs(this.state.time)}
+          </div>
+          <div className="col-md-6 no-padding">
+            {showEditLink ? (
+              <a href="javascript:void(0);" onClick={this.startEditing}>
+                {statusLabel}
+              </a>
             ) : (
-              ""
-            )}
-
-            {showExitedWithCodeOneHints ? (
-              <div className="task-warning">
-                <i className="fa fa-info-circle"></i>{" "}
-                <div className="inline">
-                  "Process exited with code 1" means that part of the processing
-                  failed. Sometimes it's a problem with the dataset, sometimes
-                  it can be solved by tweaking the{" "}
-                  <a href="javascript:void(0);" onClick={this.startEditing}>
-                    Task Options
-                  </a>{" "}
-                  and sometimes it might be a bug! If you need help, upload your
-                  images somewhere like{" "}
-                  <a href="https://www.dropbox.com/" target="_blank">
-                    Dropbox
-                  </a>{" "}
-                  or{" "}
-                  <a href="https://drive.google.com/drive/u/0/" target="_blank">
-                    Google Drive
-                  </a>{" "}
-                  and{" "}
-                  <a
-                    href="http://community.opendronemap.org/c/webodm"
-                    target="_blank"
-                  >
-                    open a topic
-                  </a>{" "}
-                  on our community forum, making sure to include a{" "}
-                  <a
-                    href="javascript:void(0);"
-                    onClick={this.setView("console")}
-                  >
-                    copy of your task's output
-                  </a>
-                  . Our awesome contributors will try to help you!{" "}
-                  <i className="far fa-smile"></i>
-                </div>
-              </div>
-            ) : (
-              ""
+              statusLabel
             )}
           </div>
+        </div>
+        <div className="row">
+          <div className="col-md-12 no-padding">
+            <i className="far fa-image"></i> {task.images_count}
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-md-12 no-padding">
+            <div className="mb">
+              <div className="labels">
+                <i className="far fa-calendar-alt"></i>{" "}
+                {new Date(task.created_at).toLocaleString()}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="row">
+          {showOrthophotoMissingWarning ? (
+            <div className="task-warning">
+              <i className="fa fa-warning"></i>{" "}
+              <span>
+                El ortofoto no pudo ser generado. Para crear uno, asegurate que
+                la información GPS este dentro del EXIF tag de tus imagenes, o
+                utiliza un archivo de Ground Control Points (GCP).
+              </span>
+            </div>
+          ) : (
+            ""
+          )}
+
+          {showMemoryErrorWarning ? (
+            <div className="task-warning">
+              <i className="fa fa-support"></i>{" "}
+              <span>
+                Parece que su nodo se ha quedado sin memoria, notifique a su
+                Administrador.
+              </span>
+            </div>
+          ) : (
+            ""
+          )}
+
+          {showTaskWarning ? (
+            <div className="task-warning">
+              <i className="fa fa-support"></i>{" "}
+              <span
+                dangerouslySetInnerHTML={{
+                  __html: this.state.friendlyTaskError,
+                }}
+              />
+            </div>
+          ) : (
+            ""
+          )}
+
+          {showExitedWithCodeOneHints ? (
+            <div className="task-warning">
+              <i className="fa fa-info-circle"></i>{" "}
+              <div className="inline">
+                "Process exited with code 1" means that part of the processing
+                failed. Sometimes it's a problem with the dataset, sometimes it
+                can be solved by tweaking the{" "}
+                <a href="javascript:void(0);" onClick={this.startEditing}>
+                  Task Options
+                </a>{" "}
+                and sometimes it might be a bug! If you need help, upload your
+                images somewhere like{" "}
+                <a href="https://www.dropbox.com/" target="_blank">
+                  Dropbox
+                </a>{" "}
+                or{" "}
+                <a href="https://drive.google.com/drive/u/0/" target="_blank">
+                  Google Drive
+                </a>{" "}
+                and{" "}
+                <a
+                  href="http://community.opendronemap.org/c/webodm"
+                  target="_blank"
+                >
+                  open a topic
+                </a>{" "}
+                on our community forum, making sure to include a{" "}
+                <a href="javascript:void(0);" onClick={this.setView("console")}>
+                  copy of your task's output
+                </a>
+                . Our awesome contributors will try to help you!{" "}
+                <i className="far fa-smile"></i>
+              </div>
+            </div>
+          ) : (
+            ""
+          )}
         </div>
         <div className="row clearfix">
           <ErrorMessage bind={[this, "actionError"]} />
@@ -695,97 +828,17 @@ class TaskListItem extends React.Component {
     // If we're editing, the expanded view becomes the edit panel
     if (this.state.editing) {
       expanded = (
-        <div className="task-list-item col-sm-4">
-          <div className="row no-padding">
-            <EditTaskPanel
-              task={this.state.task}
-              onSave={this.handleEditTaskSave}
-              onCancel={this.stopEditing}
-            />
-          </div>
-        </div>
+        <EditTaskPanel
+          task={this.state.task}
+          onSave={this.handleEditTaskSave}
+          onCancel={this.stopEditing}
+        />
       );
-    }
-
-    // @param type {String} one of: ['neutral', 'done', 'error']
-    const getStatusLabel = (text, type = "neutral", progress = 100) => {
-      let color = "rgba(255, 255, 255, 0.0)";
-      if (type === "done") color = this.backgroundSuccessColor;
-      else if (type === "error") color = this.backgroundFailedColor;
-      return (
-        <div
-          className={"status-label theme-border-primary " + type}
-          style={{
-            background: `linear-gradient(90deg, ${color} ${progress}%, rgba(255, 255, 255, 0) ${progress}%)`,
-          }}
-          title={text}
-        >
-          {text}
-        </div>
-      );
-    };
-
-    let statusLabel = "";
-    let statusIcon = statusCodes.icon(task.status);
-    let showEditLink = false;
-
-    if (task.last_error) {
-      statusLabel = getStatusLabel(task.last_error, "error");
-    } else if (!task.processing_node && !imported) {
-      statusLabel = getStatusLabel("Set a processing node");
-      statusIcon = "fa fa-hourglass-3";
-      showEditLink = true;
-    } else if (task.partial && !task.pending_action) {
-      statusIcon = "fa fa-hourglass-3";
-      statusLabel = getStatusLabel("Waiting for image upload...");
-    } else {
-      let progress = 100;
-      let type = "done";
-
-      if (task.pending_action === pendingActions.RESIZE) {
-        progress = task.resize_progress * 100;
-      } else if (task.status === null) {
-        progress = task.upload_progress * 100;
-      } else if (task.status === statusCodes.RUNNING) {
-        progress = task.running_progress * 100;
-      } else if (task.status === statusCodes.FAILED) {
-        type = "error";
-      } else if (task.status !== statusCodes.COMPLETED) {
-        type = "neutral";
-      }
-
-      statusLabel = getStatusLabel(status, type, progress);
     }
 
     return (
-      <div className="task-list-item col-sm-4 no-padding">
-        <div className="row">
-            <div className="col-sm-5 name">
-                {name}
-            </div>
-            <div className="col-sm-1 details">
-              <i className="far fa-image"></i> {task.images_count}
-            </div>
-            <div className="col-sm-2 details">
-              <i className="far fa-clock"></i>{" "}
-              {this.hoursMinutesSecs(this.state.time)}
-            </div>
-            <div className="col-sm-3">
-              {showEditLink ? (
-                <a href="javascript:void(0);" onClick={this.startEditing}>
-                  {statusLabel}
-                </a>
-              ) : (
-                statusLabel
-              )}
-            </div>
-            <div className="col-sm-1 text-right">
-              <div className="status-icon">
-                <i className={statusIcon}></i>
-              </div>
-            </div>
-        </div>
-        {expanded}
+      <div className="task-list-item col-sm-3">
+        <div className="row no-padding">{expanded}</div>
       </div>
     );
   }

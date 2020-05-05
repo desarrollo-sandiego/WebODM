@@ -419,9 +419,9 @@ class ProjectListItem extends React.Component {
           <div className="project-wrapper">
             <ErrorMessage bind={[this, 'error']} />
             <div className="btn-group pull-right">
-              {this.hasPermission("add") ? 
+              {this.hasPermission("add") ?
                 <div className={"asset-download-buttons btn-group " + (this.state.upload.uploading ? "hide" : "")}>
-                  <button type="button" 
+                  <button type="button"
                         className="btn btn-default btn-sm agregar-muestra"
                         onClick={this.handleUpload}
                         ref={this.setRef("uploadButton")}>
@@ -432,9 +432,9 @@ class ProjectListItem extends React.Component {
                 </div>
               : ""}
 
-              <button disabled={this.state.upload.error !== ""} 
+              <button disabled={this.state.upload.error !== ""}
                       type="button"
-                      className={"btn btn-primary btn-sm " + (!this.state.upload.uploading ? "hide" : "")} 
+                      className={"btn btn-primary btn-sm " + (!this.state.upload.uploading ? "hide" : "")}
                       onClick={this.cancelUpload}>
                 <i className="glyphicon glyphicon-remove-circle"></i>
                 Cancelar
