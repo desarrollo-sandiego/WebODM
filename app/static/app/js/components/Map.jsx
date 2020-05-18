@@ -326,16 +326,16 @@ https://a.tile.openstreetmap.org/{z}/{x}/{y}.png
         options: {
             position: 'topright'
         },
-    
+
         onAdd: function () {
             this.container = Leaflet.DomUtil.create('div', 'leaflet-control-add-overlay leaflet-bar leaflet-control');
             Leaflet.DomEvent.disableClickPropagation(this.container);
             const btn = Leaflet.DomUtil.create('a', 'leaflet-control-add-overlay-button');
             btn.setAttribute("title", "Add a temporary GeoJSON (.json) or ShapeFile (.zip) overlay");
-            
+
             this.container.append(btn);
             addDnDZone(btn, {url: "/", clickable: true});
-            
+
             return this.container;
         }
     });
@@ -364,7 +364,7 @@ https://a.tile.openstreetmap.org/{z}/{x}/{y}.png
                 if (typeof infoWindow === 'string') return;
 
                 const $assetLinks = $("ul.asset-links", infoWindow);
-                
+
                 if ($assetLinks.length > 0 && $assetLinks.hasClass('loading')){
                     const {id, project} = (e.popup._source[Symbol.for("meta")] || {}).task;
 

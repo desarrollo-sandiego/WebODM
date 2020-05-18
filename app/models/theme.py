@@ -20,7 +20,7 @@ class Theme(models.Model):
     tertiary = ColorField(default='#1e00fe', help_text="Navigation links.")
 
     button_primary = ColorField(default='#4c4c4c', help_text="Primary button color.")
-    button_default = ColorField(default='#528f53', help_text="Default button color.")
+    button_default = ColorField(default='#688E57', help_text="Default button color.")
     button_danger = ColorField(default='#ff3939', help_text="Delete button color.")
 
     header_background = ColorField(default='#000000', help_text="Background color of the site's header.")

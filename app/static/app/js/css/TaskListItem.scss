@@ -1,6 +1,8 @@
 .task-list-item{
+    background-color: #ffffff;
     border: solid 1px #4c4c4c;
     border-radius: 20px;
+    margin-right: 15px;
 
     &.no-padding{
         padding: 0 !important;
@@ -20,11 +22,33 @@
         }
     }
 
+    .row-odd {
+        background-color: #eeeded;
+    }
+
     .name{
+        font-size: medium;
+        font-weight: bold;
         padding-left: 0;
         margin-top: 4px;
+        text-transform: uppercase;
     }
-    
+
+    .btn-icon {
+        background-color: transparent;
+        font-size: medium;
+    }
+
+    .btn-icon-warning:hover { color: #EAB41B }
+
+    .btn-edit {
+        color: #528f53;
+    }
+
+    .btn-delete {
+        color: #ff3939;
+    }
+
     .details{
         font-size: 90%;
         padding-right: 0;
@@ -37,7 +61,7 @@
             }
         }
     }
-    
+
     .status-icon{
         margin-top: 3px;
         .fa-cog{
@@ -46,11 +70,21 @@
     }
 
     .status-label{
-        padding: 4px;
+        border: none;
+        border-radius: 12px;
+        color: #ffffff;
+        font-size: xx-small;
+        height: 100%;
+        padding: 0;
         width: 100%;
-        font-size: 90%;
-        border-style: solid;
-        border-width: 1px;
+    }
+
+    .ver-mapa {
+        background-color: #049715;
+    }
+
+    .status-label-content{
+        padding: 5px 0px;
     }
 
     .clickable:hover{
@@ -58,9 +92,9 @@
     }
 
     .expanded-panel{
-        padding-top: 4px;
-        padding-bottom: 16px;
-        padding-left: 16px;
+        padding-top: 10px;
+        padding-bottom: 15px;
+        padding-left: 0px;
 
         .task-warning{
             margin-top: 16px;
