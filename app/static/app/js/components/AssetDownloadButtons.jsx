@@ -30,24 +30,17 @@ class AssetDownloadButtons extends React.Component {
     );
 
     return (
-      <div
-        className={
-          "asset-download-buttons " +
-          (this.props.showLabel ? "btn-group" : "") +
-          " " +
-          (this.props.direction === "up" ? "dropup" : "")
-        }
-      >
+      <div className={`${this.props.direction === "up" ? "dropup" : ""}`}>
         <button
           type="button"
-          className={"btn btn-sm " + this.props.buttonClass}
+          className={"btn btn-download btn-with-icon " + this.props.buttonClass}
           disabled={this.props.disabled}
           data-toggle="dropdown"
         >
-          <i className="far fa-download"></i>
-          {this.props.showLabel ? " Download Assets" : ""}
+          <i className="glyphicon glyphicon-download-alt"></i>
+          {this.props.showLabel ? " Descargar" : ""}
         </button>
-        {this.props.showLabel ? (
+        {/* {this.props.showLabel ? (
           <button
             type="button"
             className={"btn btn-sm dropdown-toggle " + this.props.buttonClass}
@@ -58,7 +51,7 @@ class AssetDownloadButtons extends React.Component {
           </button>
         ) : (
           ""
-        )}
+        )} */}
         <ul className="dropdown-menu">
           {assetDownloads.map((asset, i) => {
             if (!asset.separator) {

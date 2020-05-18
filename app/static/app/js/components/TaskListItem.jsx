@@ -52,10 +52,26 @@ class TaskListItem extends React.Component {
     this.checkForCommonErrors = this.checkForCommonErrors.bind(this);
     this.handleEditTaskSave = this.handleEditTaskSave.bind(this);
     this.setView = this.setView.bind(this);
+    this.genActionApiCall = this.genActionApiCall.bind(this);
 
     // Retrieve CSS values for status bar colors
-    this.backgroundSuccessColor = "#528f53";
+    this.backgroundSuccessColor = "#0074E9";
     this.backgroundFailedColor = "#ff3939";
+
+    this.months = [
+      "Enero",
+      "Febrero",
+      "Marzo",
+      "Abril",
+      "Mayo",
+      "Junio",
+      "Julio",
+      "Agosto",
+      "Septiembre",
+      "Octubre",
+      "Noviembre",
+      "Diciembre",
+    ];
   }
 
   shouldRefresh() {
@@ -342,7 +358,7 @@ class TaskListItem extends React.Component {
       .filter((rf) => rf !== undefined);
   }
 
-  genRestartAction(rerunFrom = null) {
+  genRestartAction(rerunFrom = null, options = {}) {
     const { task } = this.state;
 
     const restartAction = this.genActionApiCall("restart", {
@@ -402,7 +418,13 @@ class TaskListItem extends React.Component {
     };
 
     return () => {
-      setTaskRerunFrom(rerunFrom).then(restartAction);
+      if (options.confirm) {
+        if (window.confirm(options.confirm)) {
+          setTaskRerunFrom(rerunFrom).then(restartAction);
+        }
+      } else {
+        setTaskRerunFrom(rerunFrom).then(restartAction);
+      }
     };
   }
 
@@ -445,39 +467,56 @@ class TaskListItem extends React.Component {
       });
     };
 
-    if (task.status === statusCodes.COMPLETED) {
-      if (task.available_assets.indexOf("orthophoto.tif") !== -1) {
-        addActionButton(" View Map", "btn-primary", "fa fa-globe", () => {
-          location.href = `/map/project/${task.project}/task/${task.id}/`;
-        });
-      } else {
-        showOrthophotoMissingWarning = true;
-      }
+    const setShowOrthophotoMissingWarning = (setTo) => {
+      showOrthophotoMissingWarning = setTo;
+    };
 
-      addActionButton(" View 3D Model", "btn-primary", "fa fa-cube", () => {
-        location.href = `/3d/project/${task.project}/task/${task.id}/`;
-      });
-    }
+    // if (task.status === statusCodes.COMPLETED) {
+    //   if (task.available_assets.indexOf("orthophoto.tif") !== -1) {
+    //     addActionButton(" View Map", "btn-primary", "fa fa-globe", () => {
+    //       location.href = `/map/project/${task.project}/task/${task.id}/`;
+    //     });
+    //   } else {
+    //     showOrthophotoMissingWarning = true;
+    //   }
+
+    //   addActionButton(" View 3D Model", "btn-primary", "fa fa-cube", () => {
+    //     location.href = `/3d/project/${task.project}/task/${task.id}/`;
+    //   });
+    // }
 
     // @param type {String} one of: ['neutral', 'done', 'error']
-    const getStatusLabel = (text, type = "neutral", progress = 100) => {
+    const getStatusLabel = (text, type = "neutral", progress = 0) => {
       let color = "rgba(255, 255, 255, 0.0)";
-      progress = `% ${progress}`;
+      let progressLabel = `% ${progress.toFixed(0)}`;
       if (type === "done") {
         color = this.backgroundSuccessColor;
       } else if (type === "error") {
         color = this.backgroundFailedColor;
-        progress = "SIN COMPLETAR";
+        progress = 100; //This is just to set the width to 100
+        progressLabel = "SIN COMPLETAR";
+      } else if (task.status === statusCodes.CANCELED) {
+        color = this.backgroundFailedColor;
+        progress = 100;
+        progressLabel = "CANCELADA";
       }
       return (
         <div
-          className={"status-label text-center " + type}
+          className={"status-label text-left align-middle" + type}
           style={{
-            backgroundColor: color,
+            backgroundColor: "#CCCCCC",
           }}
-          title={progress}
+          title={progressLabel}
         >
-          {progress}
+          <div
+            className="status-label status-label-content text-center align-middle"
+            style={{
+              backgroundColor: color,
+              width: `${progress <= 30 ? 30 : progress}%`,
+            }}
+          >
+            {progressLabel}
+          </div>
         </div>
       );
     };
@@ -534,20 +573,20 @@ class TaskListItem extends React.Component {
     //   );
     // }
 
-    if (
-      [statusCodes.QUEUED, statusCodes.RUNNING, null].indexOf(task.status) !==
-        -1 &&
-      (task.processing_node || imported)
-    ) {
-      addActionButton(
-        "Cancelar",
-        "btn-primary",
-        "glyphicon glyphicon-remove-circle",
-        this.genActionApiCall("cancel", {
-          defaultError: "No se puede cancelar la muestra.",
-        })
-      );
-    }
+    // if (
+    //   [statusCodes.QUEUED, statusCodes.RUNNING, null].indexOf(task.status) !==
+    //     -1 &&
+    //   (task.processing_node || imported)
+    // ) {
+    //   addActionButton(
+    //     "Cancelar",
+    //     "btn-primary",
+    //     "glyphicon glyphicon-remove-circle",
+    //     this.genActionApiCall("cancel", {
+    //       defaultError: "No se puede cancelar la muestra.",
+    //     })
+    //   );
+    // }
 
     // if (
     //   [statusCodes.FAILED, statusCodes.COMPLETED, statusCodes.CANCELED].indexOf(
@@ -587,10 +626,9 @@ class TaskListItem extends React.Component {
         pendingActions.REMOVE,
         pendingActions.RESTART,
       ].indexOf(task.pending_action) !== -1;
-
     actionButtons = (
       <div className="action-buttons">
-        {task.status === statusCodes.COMPLETED ? (
+        {/* {task.status === statusCodes.COMPLETED ? (
           <AssetDownloadButtons
             task={this.state.task}
             disabled={disabled}
@@ -599,7 +637,7 @@ class TaskListItem extends React.Component {
           />
         ) : (
           ""
-        )}
+        )} */}
         {actionButtons.map((button) => {
           const subItems = button.options.subItems || [];
           const className = button.options.className || "";
@@ -650,10 +688,11 @@ class TaskListItem extends React.Component {
       </div>
     );
 
+    const dateForMuestra = new Date(task.created_at);
     expanded = (
       <div className="expanded-panel">
         <div className="row">
-          <div className="col-md-12 no-padding">
+          <div className="col-md-12">
             <span className="name">{name}</span>
             {([
               statusCodes.FAILED,
@@ -681,41 +720,59 @@ class TaskListItem extends React.Component {
               !imported && (
                 <button
                   type="button"
-                  className="btn btn-sm btn-icon btn-repeat"
-                  onClick={() => {
-                    const rerunFrom =
-                      task.can_rerun_from.length > 1
-                        ? task.can_rerun_from[1]
-                        : null;
-                    this.genRestartAction(rerunFrom);
-                  }}
+                  className="btn btn-sm btn-icon btn-repeat btn-icon-warning"
+                  onClick={this.genRestartAction(
+                    task.can_rerun_from.length > 1
+                      ? task.can_rerun_from[1]
+                      : null,
+                    {
+                      confirm: "Está seguro que desea reiniciar la muestra?",
+                      defaultError: "No se pudo reiniciar la muestra.",
+                    }
+                  )}
                   disabled={disabled}
                 >
-                  <i className="far fa-redo"></i>
+                  <i className="glyphicon glyphicon-repeat"></i>
                 </button>
               )}
+
+            {[statusCodes.QUEUED, statusCodes.RUNNING, null].indexOf(
+              task.status
+            ) !== -1 &&
+              (task.processing_node || imported) && (
+                <button
+                  type="button"
+                  className="btn btn-sm btn-icon btn-icon-warning"
+                  onClick={this.genActionApiCall("cancel", {
+                    confirm: "Está seguro que desea cancelar la muestra?",
+                    defaultError: "No se pudo cancelar la muestra.",
+                  })}
+                  disabled={disabled}
+                >
+                  <i className="glyphicon glyphicon-remove"></i>
+                </button>
+              )}
+
             <button
               type="button"
               className="btn btn-sm btn-icon btn-delete pull-right"
-              onClick={() => {
-                this.genActionApiCall("remove", {
-                  confirm:
-                    "All information related to this task, including images, maps and models will be deleted. Continue?",
-                  defaultError: "Cannot delete task.",
-                });
-              }}
+              onClick={this.genActionApiCall("remove", {
+                confirm:
+                  "All information related to this task, including images, maps and models will be deleted. Continue?",
+                defaultError: "Cannot delete task.",
+              })}
               disabled={disabled}
             >
               <i className="far fa-trash-alt"></i>
             </button>
           </div>
         </div>
-        <div className="row">
-          <div className="col-md-6 no-padding">
+        <div className="row row-odd">
+          <div className="col-md-7">
             <i className="far fa-clock"></i>{" "}
             {this.hoursMinutesSecs(this.state.time)}
           </div>
-          <div className="col-md-6 no-padding">
+          <div className="col-md-4 no-padding">
             {showEditLink ? (
               <a href="javascript:void(0);" onClick={this.startEditing}>
                 {statusLabel}
@@ -726,22 +783,45 @@ class TaskListItem extends React.Component {
           </div>
         </div>
         <div className="row">
-          <div className="col-md-12 no-padding">
+          <div className="col-md-7">
             <i className="far fa-image"></i> {task.images_count}
           </div>
-        </div>
-        <div className="row">
-          <div className="col-md-12 no-padding">
-            <div className="mb">
-              <div className="labels">
-                <i className="far fa-calendar-alt"></i>{" "}
-                {new Date(task.created_at).toLocaleString()}
-              </div>
-            </div>
+          <div className="col-md-4 no-padding">
+            <button
+              type="button"
+              className="btn status-label ver-mapa status-label-content"
+              disabled={
+                task.status !== statusCodes.COMPLETED &&
+                task.available_assets.indexOf("orthophoto.tif") === -1
+              }
+              onClick={() => {
+                location.href = `/map/project/${task.project}/task/${task.id}/`;
+              }}
+            >
+              <i className="far fa-map"></i>
+              {` Ver mapa`}
+            </button>
           </div>
         </div>
-        <div className="row">
-          {showOrthophotoMissingWarning ? (
+        <div className="row row-odd">
+          <div className="col-md-7">
+            <div className="labels">
+              <i className="far fa-calendar-alt"></i>
+              {` ${dateForMuestra.getDate()} 
+              ${this.months[dateForMuestra.getMonth()]}, 
+              ${dateForMuestra.getFullYear()}`}
+            </div>
+          </div>
+          <div className="col-md-4 no-padding">
+            <AssetDownloadButtons
+              task={this.state.task}
+              disabled={task.status !== statusCodes.COMPLETED || disabled}
+              buttonClass=""
+            />
+          </div>
+        </div>
+        {showOrthophotoMissingWarning ? (
+          <div className="row">
             <div className="task-warning">
               <i className="fa fa-warning"></i>{" "}
               <span>
@@ -750,11 +830,13 @@ class TaskListItem extends React.Component {
                 utiliza un archivo de Ground Control Points (GCP).
               </span>
             </div>
-          ) : (
-            ""
-          )}
+          </div>
+        ) : (
+          ""
+        )}
 
-          {showMemoryErrorWarning ? (
+        {showMemoryErrorWarning ? (
+          <div className="row">
             <div className="task-warning">
               <i className="fa fa-support"></i>{" "}
               <span>
@@ -762,11 +844,13 @@ class TaskListItem extends React.Component {
                 Administrador.
               </span>
             </div>
-          ) : (
-            ""
-          )}
+          </div>
+        ) : (
+          ""
+        )}
 
-          {showTaskWarning ? (
+        {showTaskWarning ? (
+          <div className="row">
             <div className="task-warning">
               <i className="fa fa-support"></i>{" "}
               <span
@@ -775,11 +859,13 @@ class TaskListItem extends React.Component {
                 }}
               />
             </div>
-          ) : (
-            ""
-          )}
+          </div>
+        ) : (
+          ""
+        )}
 
-          {showExitedWithCodeOneHints ? (
+        {showExitedWithCodeOneHints ? (
+          <div className="row">
             <div className="task-warning">
               <i className="fa fa-info-circle"></i>{" "}
               <div className="inline">
@@ -813,10 +899,10 @@ class TaskListItem extends React.Component {
                 <i className="far fa-smile"></i>
               </div>
             </div>
-          ) : (
-            ""
-          )}
-        </div>
+          </div>
+        ) : (
+          ""
+        )}
         <div className="row clearfix">
           <ErrorMessage bind={[this, "actionError"]} />
           {actionButtons}
@@ -837,7 +923,7 @@ class TaskListItem extends React.Component {
     }
 
     return (
-      <div className="task-list-item col-sm-3">
+      <div className="task-list-item col-sm-3 no-padding">
         <div className="row no-padding">{expanded}</div>
       </div>
     );
